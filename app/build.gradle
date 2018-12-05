@@ -1,0 +1,121 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apply from: '../autodimension.gradle'
+
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.bonseyjaden.basearchitecture"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+        }
+    }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        mock {
+            versionNameSuffix = "mock"
+            applicationIdSuffix = ".mock"
+            manifestPlaceholders = [applicationName: "BaseArchitecture-MOCK"]
+        }
+        develop {
+            versionNameSuffix = "dev"
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders = [applicationName: "BaseArchitecture-DEV"]
+        }
+        staging {
+            versionNameSuffix = "stg"
+            applicationIdSuffix = ".stg"
+            manifestPlaceholders = [applicationName: "BaseArchitecture-STG"]
+        }
+        production {
+            manifestPlaceholders = [applicationName: "@string/app_name"]
+        }
+    }
+
+    applicationVariants.all { variant ->
+        def BASE_URL
+        if (variant.getName().contains("dev") || variant.getName().contains("mock")) {
+            BASE_URL = "https://www.google.com/"
+        } else if (variant.getName().contains("stg")) {
+            BASE_URL = "https://www.google.com/"
+        } else {
+            BASE_URL = "https://www.google.com/"
+        }
+        variant.buildConfigField "String", "BASE_URL", "\"${BASE_URL}\""
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+
+    lintOptions {
+        disable 'ContentDescription'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Android library
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$appCompat_version"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayout_version"
+    implementation "android.arch.lifecycle:extensions:$archComponents_version"
+
+    // Test tool
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "com.android.support.test:runner:$runner_version"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
+
+    // Dagger
+    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    implementation "com.android.support:design:$appCompat_version"
+    implementation "com.android.support:support-v4:$appCompat_version"
+
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    // Rx
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+
+    // Retrofit
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$retrofit2_rxjava2_adapter_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_interceptor_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+
+    // Room
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.persistence.room:rxjava2:$room_version"
+    testImplementation "android.arch.persistence.room:testing:$room_version"
+}
