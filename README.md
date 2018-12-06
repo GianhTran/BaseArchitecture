@@ -24,7 +24,7 @@ About Dagger 2, see more [here](https://github.com/google/dagger)
 
 LiveData, ViewModel, Room .... and more [Android JetPack](https://developer.android.com/jetpack/)
 
-### RxJava2 (implement later)
+### RxJava2
 
 RxJava – Reactive Extensions for the JVM – a library for composing asynchronous and event-based programs using observable sequences for the Java VM.
 
