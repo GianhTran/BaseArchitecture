@@ -53,9 +53,10 @@ class RxErrorHandlingCallAdapterFactory : CallAdapter.Factory() {
         private fun asRetrofitException(throwable: Throwable): RetrofitException {
             if (throwable is HttpException) {
                 val response = throwable.response()
-                if (response.errorBody() != null) {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
                     try {
-                        val errorResponse = response.errorBody()!!.string()
+                        val errorResponse = errorBody.string()
                         val serverErrorResponse = deserializeServerError(errorResponse)
                         return if (serverErrorResponse != null && !serverErrorResponse.success) {
                             RetrofitException.serverError(serverErrorResponse)
